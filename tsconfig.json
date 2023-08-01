@@ -7,10 +7,10 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
-    // "moduleResolution": "bundler",
+    /* "moduleResolution": "bundler", */
     "moduleResolution": "node",
-    // TS 3.8 废弃
-    // "allowImportingTsExtensions": true,
+    /* TS 3.8 废弃 */
+    /* "allowImportingTsExtensions": true, */
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
