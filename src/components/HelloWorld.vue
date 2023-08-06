@@ -1,3 +1,10 @@
+<!--
+ * @Author: monyer
+ * @Description:
+ * @Date: 2023-08-01 00:46:47
+ * @LastEditTime: 2023-08-05 07:47:24
+ * @FilePath: \shop-admin\src\components\HelloWorld.vue
+-->
 <script setup lang="ts">
 import { ref } from 'vue'
 
