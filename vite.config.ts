@@ -7,11 +7,13 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import svgLoader from 'vite-svg-loader'
 import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 /** 配置项文档：https://cn.vitejs.dev/config */
 export default (configEnv: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(configEnv.mode, process.cwd()) as ImportMetaEnv
-  // const viteEnv = loadEnv(configEnv.mode, process.cwd()) as any
   const { VITE_PUBLIC_PATH } = viteEnv
   return {
     /** 打包时根据实际情况修改 base */
@@ -80,6 +82,12 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       }),
       /** UnoCSS */
       UnoCSS(),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
     ],
     /** Vitest 单元测试配置：https://cn.vitest.dev/config */
     // test: {
