@@ -8,12 +8,14 @@ import path from 'path-browserify'
 interface Props {
   item: RouteRecordRaw
   isCollapse?: boolean
+  isTop?: boolean
   isFirstLevel?: boolean
   basePath?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isCollapse: false,
+  isTop: false,
   isFirstLevel: true,
   basePath: '',
 })
@@ -61,7 +63,7 @@ const resolvePath = (routePath: string) => {
   <div
     v-if="!props.item.meta?.hidden"
     :class="{
-      'simple-mode': props.isCollapse,
+      'simple-mode': props.isCollapse && !isTop,
       'first-level': props.isFirstLevel,
     }"
   >
@@ -78,8 +80,8 @@ const resolvePath = (routePath: string) => {
             :name="theOnlyOneChild.meta.svgIcon"
           />
           <component
-            :is="theOnlyOneChild.meta.elIcon"
             v-else-if="theOnlyOneChild.meta.elIcon"
+            :is="theOnlyOneChild.meta.elIcon"
             class="el-icon"
           />
           <template v-if="theOnlyOneChild.meta.title" #title>
@@ -95,8 +97,8 @@ const resolvePath = (routePath: string) => {
           :name="props.item.meta.svgIcon"
         />
         <component
-          :is="props.item.meta.elIcon"
           v-else-if="props.item.meta?.elIcon"
+          :is="props.item.meta.elIcon"
           class="el-icon"
         />
         <span v-if="props.item.meta?.title">{{ props.item.meta.title }}</span>

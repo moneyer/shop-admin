@@ -74,7 +74,7 @@ createCode()
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
       <div class="title">
-        <img src="@/assets/layout/logo-text-2.png" />
+        <img src="@/assets/layouts/logo-text-2.png" />
       </div>
       <div class="content">
         <el-form
@@ -115,7 +115,7 @@ createCode()
               size="large"
             >
               <template #append>
-                <el-image :src="codeUrl" draggable="false" @click="createCode">
+                <el-image :src="codeUrl" @click="createCode" draggable="false">
                   <template #placeholder>
                     <el-icon>
                       <Picture />

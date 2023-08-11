@@ -133,7 +133,7 @@ watch(
     <Screenfull
       v-if="settingsStore.showScreenfull"
       element=".app-main"
-      open-tips="内容区全屏"
+      :content="true"
       class="screenfull"
     />
   </div>

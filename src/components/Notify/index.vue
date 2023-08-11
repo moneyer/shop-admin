@@ -70,8 +70,8 @@ const handleHistory = () => {
         <el-tabs v-model="activeName" class="demo-tabs" stretch>
           <el-tab-pane
             v-for="(item, index) in data"
-            :key="index"
             :name="item.name"
+            :key="index"
           >
             <template #label>
               {{ item.name }}

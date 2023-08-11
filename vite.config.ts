@@ -10,10 +10,12 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { viteMockServe } from 'vite-plugin-mock'
 
 /** 配置项文档：https://cn.vitejs.dev/config */
 export default (configEnv: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(configEnv.mode, process.cwd()) as ImportMetaEnv
+  const command = configEnv.command
   const { VITE_PUBLIC_PATH } = viteEnv
   return {
     /** 打包时根据实际情况修改 base */
@@ -40,12 +42,12 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       /** 接口代理 */
       proxy: {
         '/api/v1': {
+          // target: "https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212",
           target:
-            'https://mock.mengxuegu.com/mock/63218b5fb4c53348ed2bc212/api/v1',
+            'https://www.fastmock.site/mock/761e2dda2b8890ab86c928a74e8f6538',
           ws: true,
           /** 是否允许跨域 */
           changeOrigin: true,
-          rewrite: (path) => path.replace('/api/v1', ''),
         },
       },
     },
@@ -73,6 +75,9 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
     plugins: [
       vue(),
       vueJsx(),
+      viteMockServe({
+        localEnabled: command === 'serve',
+      }),
       /** 将 SVG 静态图转化为 Vue 组件 */
       svgLoader({ defaultImport: 'url' }),
       /** SVG */

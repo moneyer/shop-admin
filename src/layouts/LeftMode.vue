@@ -3,30 +3,13 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/store/modules/app'
 import { useSettingsStore } from '@/store/modules/settings'
-import {
-  AppMain,
-  NavigationBar,
-  Settings,
-  Sidebar,
-  TagsView,
-  RightPanel,
-} from './components'
-import useResize from './hooks/useResize'
+import { AppMain, NavigationBar, Sidebar, TagsView } from './components'
 import { DeviceEnum } from '@/constants/app-key'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 
-const {
-  showGreyMode,
-  showColorWeakness,
-  showSettings,
-  showTagsView,
-  fixedHeader,
-} = storeToRefs(settingsStore)
-
-/** Layout 布局响应式 */
-useResize()
+const { showTagsView, fixedHeader } = storeToRefs(settingsStore)
 
 /** 定义计算属性 layoutClasses，用于控制布局的类名 */
 const layoutClasses = computed(() => {
@@ -35,8 +18,6 @@ const layoutClasses = computed(() => {
     openSidebar: appStore.sidebar.opened,
     withoutAnimation: appStore.sidebar.withoutAnimation,
     mobile: appStore.device === DeviceEnum.Mobile,
-    showGreyMode: showGreyMode.value,
-    showColorWeakness: showColorWeakness.value,
   }
 })
 
@@ -59,16 +40,12 @@ const handleClickOutside = () => {
     <!-- 主容器 -->
     <div :class="{ hasTagsView: showTagsView }" class="main-container">
       <!-- 头部导航栏和标签栏 -->
-      <div :class="{ 'fixed-header': fixedHeader }">
+      <div :class="{ 'fixed-header': fixedHeader }" class="layout-header">
         <NavigationBar />
         <TagsView v-show="showTagsView" />
       </div>
       <!-- 页面主体内容 -->
-      <AppMain />
-      <!-- 右侧设置面板 -->
-      <RightPanel v-if="showSettings">
-        <Settings />
-      </RightPanel>
+      <AppMain class="app-main" />
     </div>
   </div>
 </template>
@@ -83,14 +60,6 @@ $transition-time: 0.35s;
   width: 100%;
 }
 
-.showGreyMode {
-  filter: grayscale(1);
-}
-
-.showColorWeakness {
-  filter: invert(0.8);
-}
-
 .drawer-bg {
   background-color: #000;
   opacity: 0.3;
@@ -101,24 +70,24 @@ $transition-time: 0.35s;
   z-index: 999;
 }
 
-.main-container {
-  min-height: 100%;
-  transition: margin-left $transition-time;
-  margin-left: var(--v3-sidebar-width);
-  position: relative;
-}
-
 .sidebar-container {
+  background-color: var(--v3-sidebar-menu-bg-color);
   transition: width $transition-time;
   width: var(--v3-sidebar-width) !important;
   height: 100%;
   position: fixed;
-  font-size: 0px;
   top: 0;
   bottom: 0;
   left: 0;
   z-index: 1001;
   overflow: hidden;
+}
+
+.main-container {
+  min-height: 100%;
+  transition: margin-left $transition-time;
+  margin-left: var(--v3-sidebar-width);
+  position: relative;
 }
 
 .fixed-header {
@@ -130,12 +99,37 @@ $transition-time: 0.35s;
   transition: width $transition-time;
 }
 
-.hideSidebar {
-  .main-container {
-    margin-left: var(--v3-sidebar-hide-width);
+.layout-header {
+  box-shadow: var(--el-box-shadow-lighter);
+}
+
+.app-main {
+  min-height: calc(100vh - var(--v3-navigationbar-height));
+  position: relative;
+  overflow: hidden;
+}
+
+.fixed-header + .app-main {
+  padding-top: var(--v3-navigationbar-height);
+  height: 100vh;
+  overflow: auto;
+}
+
+.hasTagsView {
+  .app-main {
+    min-height: calc(100vh - var(--v3-header-height));
   }
+  .fixed-header + .app-main {
+    padding-top: var(--v3-header-height);
+  }
+}
+
+.hideSidebar {
   .sidebar-container {
     width: var(--v3-sidebar-hide-width) !important;
+  }
+  .main-container {
+    margin-left: var(--v3-sidebar-hide-width);
   }
   .fixed-header {
     width: calc(100% - var(--v3-sidebar-hide-width));
@@ -144,12 +138,15 @@ $transition-time: 0.35s;
 
 // 适配 mobile 端
 .mobile {
-  .main-container {
-    margin-left: 0px;
-  }
   .sidebar-container {
     transition: transform $transition-time;
     width: var(--v3-sidebar-width) !important;
+  }
+  .main-container {
+    margin-left: 0px;
+  }
+  .fixed-header {
+    width: 100%;
   }
   &.openSidebar {
     position: fixed;
@@ -162,15 +159,11 @@ $transition-time: 0.35s;
       transform: translate3d(calc(0px - var(--v3-sidebar-width)), 0, 0);
     }
   }
-
-  .fixed-header {
-    width: 100%;
-  }
 }
 
 .withoutAnimation {
-  .main-container,
-  .sidebar-container {
+  .sidebar-container,
+  .main-container {
     transition: none;
   }
 }

@@ -178,8 +178,8 @@ onMounted(() => {
   <div class="tags-view-container">
     <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
       <router-link
-        v-for="tag in tagsViewStore.visitedViews"
         ref="tagRefs"
+        v-for="tag in tagsViewStore.visitedViews"
         :key="tag.path"
         :class="{ active: isActive(tag) }"
         class="tags-view-item"
@@ -216,9 +216,8 @@ onMounted(() => {
 .tags-view-container {
   height: var(--v3-tagsview-height);
   width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #d8dce5;
-  box-shadow: 0 1px 3px 0 #00000010, 0 0 3px 0 #00000010;
+  background-color: var(--v3-header-bg-color);
+  box-shadow: 0 0 3px 0 #00000010;
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;

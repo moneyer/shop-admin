@@ -251,7 +251,7 @@ watch(
           :page-sizes="paginationData.pageSizes"
           :total="paginationData.total"
           :page-size="paginationData.pageSize"
-          :current-page="paginationData.currentPage"
+          :currentPage="paginationData.currentPage"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -261,8 +261,8 @@ watch(
     <el-dialog
       v-model="dialogVisible"
       :title="currentUpdateId === undefined ? '新增用户' : '修改用户'"
-      width="30%"
       @close="resetForm"
+      width="30%"
     >
       <el-form
         ref="formRef"
@@ -275,9 +275,9 @@ watch(
           <el-input v-model="formData.username" placeholder="请输入" />
         </el-form-item>
         <el-form-item
-          v-if="currentUpdateId === undefined"
           prop="password"
           label="密码"
+          v-if="currentUpdateId === undefined"
         >
           <el-input v-model="formData.password" placeholder="请输入" />
         </el-form-item>

@@ -6,8 +6,9 @@ import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useSettingsStore } from '@/store/modules/settings'
 import SidebarItem from './SidebarItem.vue'
-import SidebarLogo from './SidebarLogo.vue'
+import Logo from '../Logo/index.vue'
 import { getCssVariableValue } from '@/utils'
+import { DeviceEnum } from '@/constants/app-key'
 
 const v3SidebarMenuBgColor = getCssVariableValue('--v3-sidebar-menu-bg-color')
 const v3SidebarMenuTextColor = getCssVariableValue(
@@ -22,7 +23,8 @@ const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 const settingsStore = useSettingsStore()
 
-const { showSidebarLogo } = storeToRefs(settingsStore)
+const { sidebar, device } = storeToRefs(appStore)
+const { layoutMode, showLogo } = storeToRefs(settingsStore)
 
 const activeMenu = computed(() => {
   const {
@@ -32,22 +34,48 @@ const activeMenu = computed(() => {
   return activeMenu ? activeMenu : path
 })
 
-const isCollapse = computed(() => !appStore.sidebar.opened)
+const isCollapse = computed(() => !sidebar.value.opened)
+const isLeft = computed(() => layoutMode.value === 'left')
+const isTop = computed(() => layoutMode.value === 'top')
+const isMobile = computed(() => device.value === DeviceEnum.Mobile)
+const isLogo = computed(() => isLeft.value && showLogo.value)
+const backgroundColor = computed(() =>
+  isLeft.value ? v3SidebarMenuBgColor : undefined
+)
+const textColor = computed(() =>
+  isLeft.value ? v3SidebarMenuTextColor : undefined
+)
+const activeTextColor = computed(() =>
+  isLeft.value ? v3SidebarMenuActiveTextColor : undefined
+)
+const sidebarMenuItemHeight = computed(() => {
+  return layoutMode.value !== 'top'
+    ? getCssVariableValue('--v3-sidebar-menu-item-height')
+    : getCssVariableValue('--v3-navigationbar-height')
+})
+const sidebarMenuHoverBgColor = computed(() => {
+  return layoutMode.value !== 'top'
+    ? getCssVariableValue('--v3-sidebar-menu-hover-bg-color')
+    : 'transparent'
+})
+const tipLineWidth = computed(() => {
+  return layoutMode.value !== 'top' ? '2px' : '0px'
+})
 </script>
 
 <template>
-  <div :class="{ 'has-logo': showSidebarLogo }">
-    <SidebarLogo v-if="showSidebarLogo" :collapse="isCollapse" />
+  <div :class="{ 'has-logo': isLogo }">
+    <Logo v-if="isLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
-        :collapse="isCollapse"
-        :background-color="v3SidebarMenuBgColor"
-        :text-color="v3SidebarMenuTextColor"
-        :active-text-color="v3SidebarMenuActiveTextColor"
+        :collapse="isCollapse && !isTop"
+        :background-color="backgroundColor"
+        :text-color="textColor"
+        :active-text-color="activeTextColor"
         :unique-opened="true"
         :collapse-transition="false"
-        mode="vertical"
+        :mode="isTop && !isMobile ? 'horizontal' : 'vertical'"
       >
         <SidebarItem
           v-for="route in permissionStore.routes"
@@ -55,6 +83,7 @@ const isCollapse = computed(() => !appStore.sidebar.opened)
           :item="route"
           :base-path="route.path"
           :is-collapse="isCollapse"
+          :is-top="isTop"
         />
       </el-menu>
     </el-scrollbar>
@@ -68,7 +97,7 @@ const isCollapse = computed(() => !appStore.sidebar.opened)
     position: absolute;
     top: 0;
     left: 0;
-    width: 2px;
+    width: v-bind(tipLineWidth);
     height: 100%;
     background-color: var(--v3-sidebar-menu-tip-line-bg-color);
   }
@@ -76,12 +105,14 @@ const isCollapse = computed(() => !appStore.sidebar.opened)
 
 .has-logo {
   .el-scrollbar {
-    height: calc(100% - var(--v3-header-height));
+    // 多 1% 是为了在左侧模式时侧边栏最底部不显示 1px 左右的白色线条
+    height: calc(101% - var(--v3-header-height));
   }
 }
 
 .el-scrollbar {
-  height: 100%;
+  // 多 5% 是为了在顶部模式时不显示垂直滚动条
+  height: 105%;
   :deep(.scrollbar-wrapper) {
     // 限制水平宽度
     overflow-x: hidden !important;
@@ -106,16 +137,25 @@ const isCollapse = computed(() => !appStore.sidebar.opened)
 
 :deep(.el-menu-item),
 :deep(.el-sub-menu__title),
-:deep(.el-sub-menu .el-menu-item) {
-  height: var(--v3-sidebar-menu-item-height);
-  line-height: var(--v3-sidebar-menu-item-height);
+:deep(.el-sub-menu .el-menu-item),
+:deep(.el-menu--horizontal .el-menu-item) {
+  height: v-bind(sidebarMenuItemHeight);
+  line-height: v-bind(sidebarMenuItemHeight);
   &.is-active,
   &:hover {
-    background-color: var(--v3-sidebar-menu-hover-bg-color);
+    background-color: v-bind(sidebarMenuHoverBgColor);
   }
   display: block;
   * {
     vertical-align: middle;
+  }
+}
+
+:deep(.el-sub-menu) {
+  &.is-active {
+    .el-sub-menu__title {
+      color: v-bind(activeTextColor) !important;
+    }
   }
 }
 
@@ -129,7 +169,6 @@ const isCollapse = computed(() => !appStore.sidebar.opened)
   :deep(.el-sub-menu) {
     &.is-active {
       .el-sub-menu__title {
-        color: var(--v3-sidebar-menu-active-text-color) !important;
         @include tip-line;
       }
     }

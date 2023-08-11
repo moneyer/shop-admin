@@ -11,8 +11,8 @@ const props = defineProps<Props>()
 <template>
   <el-empty v-if="props.list.length === 0" />
   <el-card
-    v-for="(item, index) in props.list"
     v-else
+    v-for="(item, index) in props.list"
     :key="index"
     shadow="never"
     class="card-container"

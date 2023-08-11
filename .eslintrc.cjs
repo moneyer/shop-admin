@@ -1,10 +1,3 @@
-/*
- * @Author: 纸钞
- * @Description:
- * @Date: 2023-08-01 12:41:43
- * @LastEditTime: 2023-08-05 07:44:52
- * @FilePath: \shop-admin\.eslintrc.cjs
- */
 module.exports = {
   root: true,
   env: {
@@ -13,11 +6,11 @@ module.exports = {
     es6: true,
   },
   extends: [
-    'plugin:vue/vue3-recommended',
+    'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/typescript/recommended',
-    '@vue/eslint-config-typescript',
     '@vue/prettier',
+    '@vue/eslint-config-typescript',
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -53,8 +46,6 @@ module.exports = {
         varsIgnorePattern: '^_',
       },
     ],
-    // semi: ['error', 'never'],
-    // quotes: ['error', 'single'],
     // Vue
     'vue/no-v-html': 'off',
     'vue/require-default-prop': 'off',
